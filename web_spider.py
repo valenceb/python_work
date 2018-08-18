@@ -117,3 +117,4 @@ def crawling_by_category(url, subcategory):
 if __name__ == '__main__':
     url = "https://96xxfl.com/"
     crawling_by_category("https://96xxfl.com/", "luyilu")
+    print("Process Completed Successfully.")
