@@ -4,32 +4,34 @@ import os
 import time
 from io import BytesIO
 from PIL import Image
-  
-def getHtml(url):  
-	try:
-		page = urllib.request.urlopen(url)
-		html = page.read()  
-		html=str(html)
-		return html
-	except urllib.error.HTTPError as e:  
-		print (e.reason)
-		return False
 
-def mkdir(path):  
-	path = path.strip()  
-	isExists = os.path.exists(path)
-	if not isExists:
-		os.makedirs(path)
-		print("Created file directory at "+path)
-		return True
-	else:  
-		print(path+' created successfully.')
-		return False  
-  
-# save all images with the filename  
-def saveImages(imglist,name):
+
+def getHtml(url):
+    try:
+        page = urllib.request.urlopen(url)
+        html = page.read()
+        html = str(html)
+        return html
+    except urllib.error.HTTPError as e:
+        print(e.reason)
+        return False
+
+
+def mkdir(path):
+    path = path.strip()
+    isExists = os.path.exists(path)
+    if not isExists:
+        os.makedirs(path)
+        print("Created file directory at " + path)
+        return True
+    else:
+        print(path + ' created successfully.')
+        return False
+
+
+def saveImages(imglist, name):
     number = 1
-    for imageURL in imglist:    	
+    for imageURL in imglist:
         splitPath = imageURL.split('.')
         fTail = splitPath.pop()
         fName = splitPath.pop().split('/').pop()
@@ -52,65 +54,66 @@ def saveImages(imglist,name):
             data = u.read()
             try:
                 im = Image.open(BytesIO(data))
-            except Exception as err:  
-                print(err)  
-            if im.size[0]<300:
+            except Exception as err:
+                print(err)
+            if im.size[0] < 300:
                 return
-            f = open(fileName,'wb+')
+            f = open(fileName, 'wb+')
             f.write(data)
-            print('Saving a pic named ',fileName)
+            print('Saving a pic named ', fileName)
             f.close()
         except urllib.error.HTTPError as e:
-            print (imageURL)
-            print (e.reason)
+            print(imageURL)
+            print(e.reason)
         number += 1
-  
-#get all the image url from html  
+
+
+# get all the image url from html
 def getAllImg(html):
     reg = r'src=\"(.{0,100}\.jpg)\"'
-    imglist = re.findall(reg,html)
+    imglist = re.findall(reg, html)
     return imglist
 
-def crawling(url,path):
-	print("Crawling " + url)
-	srcHtml = getHtml(url)
-	if not srcHtml:
-		return False
-	mkdir(path)
-	imglist = getAllImg(srcHtml)
-	#print(imglist)
-	saveImages(imglist,path)
-	return True
+
+def crawling(url, path):
+    print("Crawling " + url)
+    srcHtml = getHtml(url)
+    if not srcHtml:
+        return False
+    mkdir(path)
+    imglist = getAllImg(srcHtml)
+    # print(imglist)
+    saveImages(imglist, path)
+    return True
+
 
 def getDomain(urlstr):
-	reg = '(http://.+?)/.+'
-	dmn = re.findall(reg,urlstr)
-	if len(dmn)>0:
-		dmnstr = dmn[0][:-1]
-		print (str(dmnstr))
-		return dmnstr
-	else:
-		return urlstr
+    reg = '(http://.+?)/.+'
+    dmn = re.findall(reg, urlstr)
+    if len(dmn) > 0:
+        dmnstr = dmn[0][:-1]
+        print(str(dmnstr))
+        return dmnstr
+    else:
+        return urlstr
+
 
 def crawling_by_category(url, subcategory):
-	reg = '<a target=\"_blank\" href=\"(/'+subcategory+'/3.+?\.html)\"'
-	path = time.strftime('%Y-%m-%d',time.localtime(time.time()))
-	path = "output/"+subcategory+"_"+path
-	xxnetHtml = getHtml(url+subcategory)
-	domain = getDomain(url)
-	hrefList = re.findall(reg,xxnetHtml)
-	print (hrefList)
-	for href in hrefList:
-		# print (href if href[0:4]=="http" else domain+href)
-		if not crawling(href if href[0:4]=="http" else domain+href,path): continue
-		for value in range(2,30):
-			href_sub = href[:-5]+"_"+str(value)+".html"
-			if not crawling(href_sub if href[0:4]=="http" else domain+href_sub,path): break
+    reg = '<a target=\"_blank\" href=\"(/' + subcategory + '/3.+?\.html)\"'
+    path = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+    path = "output/" + subcategory + "_" + path
+    xxnetHtml = getHtml(url + subcategory)
+    domain = getDomain(url)
+    hrefList = re.findall(reg, xxnetHtml)
+    print(hrefList)
+    for href in hrefList:
+        # print (href if href[0:4]=="http" else domain+href)
+        if not crawling(href if href[0:4] == "http" else domain + href, path): continue
+        for value in range(2, 30):
+            href_sub = href[:-5] + "_" + str(value) + ".html"
+            if not crawling(href_sub if href[0:4] == "http" else domain + href_sub, path): break
+
 
 if __name__ == '__main__':
-	url = "https://96xxfl.com/"
-#	path = time.strftime('%Y-%m-%d',time.localtime(time.time()))
-	# crawling_by_category("http://96xxnet.com/luyilu/1500.html", "luyilu")
-#	crawling_by_category(url, "xiurenwang")
-#	crawling_by_category(url, "AISSaisi")
-	crawling_by_category("https://96xxfl.com/","luyilu")
+    url = "https://96xxfl.com/"
+    crawling_by_category("https://96xxfl.com/", "luyilu")
