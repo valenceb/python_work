@@ -26,17 +26,13 @@ def getHtml(url):
         return False
 
 
-def inSprint(sprint):
-    return
-
-
 class Project:
     def __init__(self, wiki):
         self.wiki = wiki
         html = getHtml(wiki)
         reg = 'Project Title Regular Formular'
         self.title = re.search(reg, html).group()
-        self.row = 0
+        self.exlRow = 0
 
 
 class Sprint:
@@ -48,21 +44,28 @@ class Sprint:
         self.sprintNum = searchObj.group(1)
         self.startDate = string2Date(startDate)
         self.endDate = string2Date(endDate)
-        self.column = 0
+        self.exlCol = 0
         now = datetime.datetime.now()
-        if self.startDate<now and self.endDate>now:
+        if self.startDate < now and self.endDate > now:
             self.isCurSprint = True
         else:
             self.isCurSprint = False
 
 
 class Backlog:
-    def __init__(self, checkItem):
+    def __init__(self, sprintList, checkItem, exlRow):
         reg = 'Identify date/description'
         self.date = ""
         self.description = ""
-        self.column = 0
-        self.row = 0
+        self.exlRow = exlRow
+        self.exlCol = self.inSprint(sprintList)
+
+    def inSprint(self, sprintList):
+        column = 0
+        for sprint in sprintList:
+            if sprint.startDate < self.date and sprint.endDate > self.date:
+                column = sprint.exlCol
+        return column
 
 
 if __name__ == '__main__':
