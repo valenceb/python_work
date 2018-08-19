@@ -53,18 +53,25 @@ class Sprint:
 
 
 class Backlog:
-    def __init__(self, sprintList, checkItem, exlRow):
+    def __init__(self, sprintList, checkItem, projExlRow):
         reg = 'Identify date/description'
         self.date = ""
         self.description = ""
-        self.exlRow = exlRow
+        self.exlRow = projExlRow
         self.exlCol = self.inSprint(sprintList)
 
     def inSprint(self, sprintList):
         column = 0
-        for sprint in sprintList:
-            if sprint.startDate < self.date and sprint.endDate > self.date:
-                column = sprint.exlCol
+        if self.date == "":
+            for sprint in sprintList:
+                if sprint.isCurSprint:
+                    column = sprint.exlCol + 1  # 没有设置Timeline的Item默认放到下个Sprint
+                    break
+        else:
+            for sprint in sprintList:
+                if sprint.startDate < self.date and sprint.endDate > self.date:
+                    column = sprint.exlCol
+                    break
         return column
 
 
