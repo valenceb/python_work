@@ -36,7 +36,7 @@ class Project:
 
 
 class Sprint:
-    def __init__(self, sprintName):
+    def __init__(self, sprintName, exlCol):
         reg = r'Sprint (\d+)\((\d+/\d+)-(\d+/\d+)\)'
         searchObj = re.search(reg, sprintName, re.M | re.I)
         startDate = searchObj.group(2)
@@ -44,7 +44,7 @@ class Sprint:
         self.sprintNum = searchObj.group(1)
         self.startDate = string2Date(startDate)
         self.endDate = string2Date(endDate)
-        self.exlCol = 0
+        self.exlCol = chr(65+exlCol)
         now = datetime.datetime.now()
         if self.startDate < now and self.endDate > now:
             self.isCurSprint = True
@@ -57,6 +57,7 @@ class Backlog:
         reg = 'Identify date/description'
         self.date = ""
         self.description = ""
+        self.checked = False
         self.exlRow = projExlRow
         self.exlCol = self.inSprint(sprintList)
 
@@ -79,14 +80,16 @@ if __name__ == '__main__':
     projectList = []
     sprintList = []
     with open('conf/project.csv') as f:
-        empf = csv.reader(f)
-        for emp in empf:
-            projectList.append(emp)
+        csvLines = csv.reader(f)
+        for csvL in csvLines:
+            projectList.append(csvL)
     print(projectList)
     with open('conf/sprint.csv') as f:
-        empf = csv.reader(f)
-        for emp in empf:
-            sprintList.append(emp)
-    sprint1 = Sprint(''.join(sprintList[0]))
-    print(sprint1.startDate)
-    print(sprint1.endDate)
+        csvLines = csv.reader(f)
+        i=1
+        for csvL in csvLines:
+            sprintList.append(Sprint(''.join(csvL),i))
+            i+=1
+    print(sprintList)
+    print('\nProcess Done.')
+
