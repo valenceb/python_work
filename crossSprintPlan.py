@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 __author__ = "valenceb"
 
-from openpyxl import Workbook
+# from openpyxl import Workbook
 import datetime
 import csv
 import urllib.request
@@ -26,13 +26,32 @@ def getHtml(url):
         return False
 
 
+def trimHtml(html):
+    dr = re.compile(r'<[^>]+>', re.S)
+    return dr.sub('', html)
+
+
+def getBacklogs(html, sprintList, exlRow):
+    reg = r'<li class=\"(.*?)\" data-inline-task-id=\"\d+\">(.*?)</li>'
+    actionItems = re.findall(reg, html)
+    backlogs = []
+    for ai in actionItems:
+        backlogs.append(Backlog(sprintList, ai, exlRow))
+    return backlogs
+
+
 class Project:
-    def __init__(self, wiki):
-        self.wiki = wiki
+    def __init__(self, sprintList, wiki, exlRow):
         html = getHtml(wiki)
-        reg = 'Project Title Regular Formular'
-        self.title = re.search(reg, html).group()
-        self.exlRow = 0
+        reg = r'<h1 id=\"title-text\" class=\".*?\">.*?<a href=\".*?\">(.*?)</a>.*?</h1>'
+        searchObj = re.search(reg, html, re.M | re.I)
+        if not searchObj:
+            self.title = None
+        else:
+            self.title = searchObj.group(1)
+        self.wiki = wiki
+        self.exlRow = exlRow
+        self.backlogs = getBacklogs(html, sprintList, exlRow)
 
 
 class Sprint:
@@ -44,7 +63,7 @@ class Sprint:
         self.sprintNum = searchObj.group(1)
         self.startDate = string2Date(startDate)
         self.endDate = string2Date(endDate)
-        self.exlCol = chr(65+exlCol)
+        self.exlCol = chr(65 + exlCol)
         now = datetime.datetime.now()
         if self.startDate < now and self.endDate > now:
             self.isCurSprint = True
@@ -53,8 +72,8 @@ class Sprint:
 
 
 class Backlog:
-    def __init__(self, sprintList, checkItem, projExlRow):
-        reg = 'Identify date/description'
+    def __init__(self, sprintList, actionItem, projExlRow):
+        reg = '<li class=\"(.*?)\" data-inline-task-id=\"\d+\">(.*?)</li>'
         self.date = ""
         self.description = ""
         self.checked = False
@@ -82,14 +101,17 @@ if __name__ == '__main__':
     with open('conf/project.csv') as f:
         csvLines = csv.reader(f)
         for csvL in csvLines:
-            projectList.append(csvL)
+            proj = Project(''.join(csvL))
+            if not proj.title:
+                print('No such project.')
+            else:
+                projectList.append(proj)
     print(projectList)
     with open('conf/sprint.csv') as f:
         csvLines = csv.reader(f)
-        i=1
+        i = 1
         for csvL in csvLines:
-            sprintList.append(Sprint(''.join(csvL),i))
-            i+=1
+            sprintList.append(Sprint(''.join(csvL), i))
+            i += 1
     print(sprintList)
     print('\nProcess Done.')
-
