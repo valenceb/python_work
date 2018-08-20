@@ -22,7 +22,7 @@ def getHtml(url):
         html = str(html)
         return html
     except Exception as e:
-        print(e.reason)
+        print(e)
         return False
 
 
@@ -32,7 +32,7 @@ def trimHtml(html):
 
 
 def getBacklogs(html, sprintList, exlRow):
-    reg = r'<li class=\"(.*?)\" data-inline-task-id=\"\d+\">(.*?)</li>'
+    reg = r'(<li (class=\"\w*\" )?data-inline-task-id=\"\d+\">.*?</li>)'
     actionItems = re.findall(reg, html)
     backlogs = []
     for ai in actionItems:
@@ -41,7 +41,7 @@ def getBacklogs(html, sprintList, exlRow):
 
 
 class Project:
-    def __init__(self, sprintList, wiki, exlRow):
+    def __init__(self, wiki, sprintList, exlRow):
         html = getHtml(wiki)
         reg = r'<h1 id=\"title-text\" class=\".*?\">.*?<a href=\".*?\">(.*?)</a>.*?</h1>'
         searchObj = re.search(reg, html, re.M | re.I)
@@ -73,10 +73,11 @@ class Sprint:
 
 class Backlog:
     def __init__(self, sprintList, actionItem, projExlRow):
-        reg = '<li class=\"(.*?)\" data-inline-task-id=\"\d+\">(.*?)</li>'
-        self.date = ""
-        self.description = ""
-        self.checked = False
+        reg = '<li class=\"(.*?)\" data-inline-task-id=\"\d+\">(.*?)(<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>)?.</li>'
+        searchObj = re.search(reg, actionItem)
+        self.checked = True if searchObj.group(1) == 'checked' else False
+        self.description = searchObj.group(2)
+        self.date = seaerchObj.group(3)
         self.exlRow = projExlRow
         self.exlCol = self.inSprint(sprintList)
 
@@ -98,20 +99,24 @@ class Backlog:
 if __name__ == '__main__':
     projectList = []
     sprintList = []
-    with open('conf/project.csv') as f:
-        csvLines = csv.reader(f)
-        for csvL in csvLines:
-            proj = Project(''.join(csvL))
-            if not proj.title:
-                print('No such project.')
-            else:
-                projectList.append(proj)
-    print(projectList)
+
     with open('conf/sprint.csv') as f:
         csvLines = csv.reader(f)
         i = 1
         for csvL in csvLines:
             sprintList.append(Sprint(''.join(csvL), i))
             i += 1
+
+    with open('conf/project.csv') as f:
+        csvLines = csv.reader(f)
+        i = 1
+        for csvL in csvLines:
+            proj = Project(''.join(csvL), sprintList, i)
+            if not proj.title:
+                print('No such project.')
+            else:
+                projectList.append(proj)
+            i += 1
+    print(projectList)
     print(sprintList)
     print('\nProcess Done.')
