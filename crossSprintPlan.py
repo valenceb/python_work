@@ -32,7 +32,7 @@ def trimHtml(html):
 
 
 def getBacklogs(html, sprintList, exlRow):
-    reg = r'(<li (class=\"\w*\" )?data-inline-task-id=\"\d+\">.*?</li>)'
+    reg = r'(<li (?:class=\"\w*\" )?data-inline-task-id=\"\d+\">.*?</li>)'
     actionItems = re.findall(reg, html)
     backlogs = []
     for ai in actionItems:
@@ -73,20 +73,21 @@ class Sprint:
 
 class Backlog:
     def __init__(self, sprintList, actionItem, projExlRow):
-        reg = '<li class=\"(.*?)\" data-inline-task-id=\"\d+\">(.*?)(<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>)?.</li>'
+        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\">(.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>)?.</li>'
         searchObj = re.search(reg, actionItem)
         self.checked = True if searchObj.group(1) == 'checked' else False
-        self.description = searchObj.group(2)
-        self.date = seaerchObj.group(3)
+        self.description = trimHtml(searchObj.group(2))
+        tempDate = searchObj.group(3)
+        self.date = None if not tempDate else datetime.datetime.strptime(tempDate, '%Y-%m-%d')
         self.exlRow = projExlRow
         self.exlCol = self.inSprint(sprintList)
 
     def inSprint(self, sprintList):
         column = 0
-        if self.date == "":
+        if not self.date:
             for sprint in sprintList:
                 if sprint.isCurSprint:
-                    column = sprint.exlCol + 1  # 没有设置Timeline的Item默认放到下个Sprint
+                    column = chr(ord(sprint.exlCol) + 1)  # 没有设置Timeline的Item默认放到下个Sprint
                     break
         else:
             for sprint in sprintList:
