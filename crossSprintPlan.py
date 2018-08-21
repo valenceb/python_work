@@ -3,6 +3,7 @@
 __author__ = "valenceb"
 
 # from openpyxl import Workbook
+from excelStyle import getBodyStyle, getHeaderStyle, getProjHeaderStyle
 import datetime
 import csv
 import urllib.request
@@ -73,12 +74,14 @@ class Sprint:
 
 class Backlog:
     def __init__(self, sprintList, actionItem, projExlRow):
-        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\">(.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>.*?)?</li>'
+        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\"> \
+        (.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>.*?)?</li>'
         searchObj = re.search(reg, actionItem)
         self.checked = True if searchObj.group(1) == 'checked' else False
         self.description = trimHtml(searchObj.group(2))
         tempDate = searchObj.group(3)
-        self.date = None if not tempDate else datetime.datetime.strptime(tempDate, '%Y-%m-%d')
+        self.date = (None if not tempDate
+                     else datetime.datetime.strptime(tempDate, '%Y-%m-%d'))
         self.exlRow = projExlRow
         self.exlCol = self.inSprint(sprintList)
 
@@ -87,7 +90,8 @@ class Backlog:
         if not self.date:
             for sprint in sprintList:
                 if sprint.isCurSprint:
-                    column = chr(ord(sprint.exlCol) + 1)  # 没有设置Timeline的Item默认放到下个Sprint
+                    column = chr(ord(sprint.exlCol) + 1)
+                    # 没有设置Timeline的Item默认放到下个Sprint
                     break
         else:
             for sprint in sprintList:
