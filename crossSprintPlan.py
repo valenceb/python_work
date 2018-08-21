@@ -73,7 +73,7 @@ class Sprint:
 
 class Backlog:
     def __init__(self, sprintList, actionItem, projExlRow):
-        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\">(.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>)?.</li>'
+        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\">(.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>.*?)?</li>'
         searchObj = re.search(reg, actionItem)
         self.checked = True if searchObj.group(1) == 'checked' else False
         self.description = trimHtml(searchObj.group(2))
