@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 __author__ = "valenceb"
 
-# from openpyxl import Workbook
+from openpyxl import Workbook
 from excelStyle import getBodyStyle, getHeaderStyle, getProjHeaderStyle
 import datetime
 import csv
@@ -42,7 +42,7 @@ def getBacklogs(html, sprintList, exlRow):
 
 
 class Project:
-    def __init__(self, wiki, sprintList, exlRow):
+    def __init__(self, wiki, sprintList, exlRow, ws):
         html = getHtml(wiki)
         reg = r'<h1 id=\"title-text\" class=\".*?\">.*?<a href=\".*?\">(.*?)</a>.*?</h1>'
         searchObj = re.search(reg, html, re.M | re.I)
@@ -54,13 +54,16 @@ class Project:
         self.exlRow = exlRow
         self.backlogs = getBacklogs(html, sprintList, exlRow)
 
+    def renderProject(self):
+
 
 class Sprint:
-    def __init__(self, sprintName, exlCol):
+    def __init__(self, sprintName, exlCol, ws):
         reg = r'Sprint (\d+)\((\d+/\d+)-(\d+/\d+)\)'
         searchObj = re.search(reg, sprintName, re.M | re.I)
         startDate = searchObj.group(2)
         endDate = searchObj.group(3)
+        self.sprintName = sprintName
         self.sprintNum = searchObj.group(1)
         self.startDate = string2Date(startDate)
         self.endDate = string2Date(endDate)
@@ -70,6 +73,12 @@ class Sprint:
             self.isCurSprint = True
         else:
             self.isCurSprint = False
+        self.renderSprint(ws)
+
+    def renderSprint(self, ws):
+        cell = self.exlCol.join('1')
+        ws.cell(column=self.exlCol, row=1, value=self.sprintName)
+        ws[cell].style = 'header'
 
 
 class Backlog:
@@ -104,19 +113,24 @@ class Backlog:
 if __name__ == '__main__':
     projectList = []
     sprintList = []
+    wb = Workbook()
+    wb.add_named_style(getHeaderStyle())
+    wb.add_named_style(getProjHeaderStyle())
+    wb.add_named_style(getBodyStyle())
+    ws = wb.active
 
     with open('conf/sprint.csv') as f:
         csvLines = csv.reader(f)
         i = 1
         for csvL in csvLines:
-            sprintList.append(Sprint(''.join(csvL), i))
+            sprintList.append(Sprint(''.join(csvL), i, ws))
             i += 1
 
     with open('conf/project.csv') as f:
         csvLines = csv.reader(f)
         i = 1
         for csvL in csvLines:
-            proj = Project(''.join(csvL), sprintList, i)
+            proj = Project(''.join(csvL), sprintList, i, ws)
             if not proj.title:
                 print('No such project.')
             else:
