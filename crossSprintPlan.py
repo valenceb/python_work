@@ -14,8 +14,12 @@ if __name__ == '__main__':
     wb.add_named_style(getHeaderStyle())
     wb.add_named_style(getProjHeaderStyle())
     wb.add_named_style(getBodyStyle())
-    ws.add_named_style(getBlackFont())
+    wb.add_named_style(getBlackFont())
     ws = wb.active
+    ws['A1'] = "Project/Sprints"
+    ws['A1'].style = 'header'
+    ws.column_dimensions['A'].width = 20
+    ws.freeze_panes = 'B1'
 
     with open('conf/sprint.csv') as f:
         csvLines = csv.reader(f)
@@ -26,7 +30,7 @@ if __name__ == '__main__':
 
     with open('conf/project.csv') as f:
         csvLines = csv.reader(f)
-        i = 1
+        i = 2
         for csvL in csvLines:
             proj = Project(''.join(csvL), sprintList, i, ws)
             if not proj.title:

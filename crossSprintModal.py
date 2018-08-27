@@ -49,20 +49,26 @@ class Project:
         self.wiki = wiki
         self.exlRow = exlRow
         self.backlogs = getBacklogs(html, sprintList, exlRow)
-        self.renderProject(self, ws)
+        self.renderProject(ws, sprintList)
 
-    def renderProject(self, ws):
-        ws.row_dimensions[self.exlRow].style = 'body'
-        cell = 'A'.join(self.exlRow)
+    def renderProject(self, ws, sprintList):
+        cell = 'A' + str(self.exlRow)
         ws[cell] = self.title
         ws[cell].style = 'projHeader'
+        for sprint in sprintList:
+            cell = sprint.exlCol + str(self.exlRow)
+            ws[cell].style = 'backlog'
         for backlog in self.backlogs:
-            cell = backlog.exlCol.join(backlog.exlRow)
-            incValue = ws[cell].value + ("√ " if backlog.checked else "") + \
-                       backlog.date.strftime('%m/%d') + " " + backlog.description
+            cell = backlog.exlCol + str(backlog.exlRow)
+            backlogDate = (backlog.date.strftime('%m/%d') + " ") \
+                if backlog.date else ""
+            preValue = ws[cell].value if ws[cell].value else ""
+            incValue = preValue + ("√ " if backlog.checked else "") + \
+                       backlogDate + backlog.description
             ws[cell] = incValue
-            if backlog.checked:
+            if not backlog.checked:
                 ws[cell].style = 'blackFont'
+
 
 
 class Sprint:
@@ -84,15 +90,15 @@ class Sprint:
         self.renderSprint(ws)
 
     def renderSprint(self, ws):
-        cell = self.exlCol.join('1')
-        ws[cell].value = self.sprintName
+        ws.column_dimensions[self.exlCol].width = 35 if self.isCurSprint else 30
+        cell = self.exlCol + '1'
+        ws[cell] = self.sprintName
         ws[cell].style = 'header'
 
 
 class Backlog:
     def __init__(self, sprintList, actionItem, projExlRow):
-        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\"> \
-        (.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>.*?)?</li>'
+        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\">(.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>.*?)?</li>'
         searchObj = re.search(reg, actionItem)
         self.checked = True if searchObj.group(1) == 'checked' else False
         self.description = trimHtml(searchObj.group(2)) + "\n"

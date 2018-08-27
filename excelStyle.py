@@ -19,7 +19,7 @@ alignment = Alignment(horizontal='general',
                       shrink_to_fit=False,
                       indent=0)
 
-bd = Side(style='thick', color="000000")
+bd = Side(style='thin', color="0088FF")
 
 
 def getHeaderStyle():
@@ -27,13 +27,18 @@ def getHeaderStyle():
     header.font = brightFont
     header.fill = PatternFill("solid", fgColor="0000FF")
     header.border = Border(left=bd, top=bd, right=bd, bottom=bd)
-    header.alignment = alignment
+    header.alignment = Alignment(horizontal='center',
+                      vertical='center',
+                      text_rotation=0,
+                      wrap_text=True,
+                      shrink_to_fit=False,
+                      indent=0)
     return header
 
 
 def getProjHeaderStyle():
     projHeader = NamedStyle(name="projHeader")
-    projHeader.font = Font(name='Calibri',
+    projHeader.font = Font(name='Arial',
                            size=11,
                            bold=True,
                            italic=False,
@@ -47,22 +52,27 @@ def getProjHeaderStyle():
 
 
 def getBodyStyle():
-    bodyStyle = NamedStyle(name="body")
-    bodyStyle.font = Font(name='Calibri',
+    bodyStyle = NamedStyle(name="backlog")
+    bodyStyle.font = Font(name='Arial',
                           size=11,
                           bold=False,
                           italic=False,
                           vertAlign=None,
                           underline='none',
                           strike=False,
-                          color='202020')
-    bodyStyle.boder = Border(left=bd, top=bd, right=bd, bottom=bd)
-    bodyStyle.alignment = alignment
+                          color='909090')
+    bodyStyle.border = Border(left=bd, top=bd, right=bd, bottom=bd)
+    bodyStyle.alignment = Alignment(horizontal='general',
+                      vertical='top',
+                      text_rotation=0,
+                      wrap_text=True,
+                      shrink_to_fit=False,
+                      indent=0)
     return bodyStyle
 
 def getBlackFont():
     blackFont = NamedStyle(name="blackFont")
-    blackFont.font = Font(name='Calibri',
+    blackFont.font = Font(name='Arial',
                           size=11,
                           bold=False,
                           italic=False,
@@ -70,6 +80,11 @@ def getBlackFont():
                           underline='none',
                           strike=False,
                           color='000000')
-    blackFont.boder = Border(left=bd, top=bd, right=bd, bottom=bd)
-    blackFont.alignment = alignment
+    blackFont.border = Border(left=bd, top=bd, right=bd, bottom=bd)
+    blackFont.alignment = Alignment(horizontal='general',
+                      vertical='top',
+                      text_rotation=0,
+                      wrap_text=True,
+                      shrink_to_fit=False,
+                      indent=0)
     return blackFont
