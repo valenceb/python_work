@@ -63,7 +63,7 @@ class Project:
             backlogDate = (backlog.date.strftime('%m/%d') + " ") \
                 if backlog.date else ""
             preValue = ws[cell].value if ws[cell].value else ""
-            incValue = preValue + ("√ " if backlog.checked else "") + \
+            incValue = preValue + ("√ " if backlog.checked else "◆ ") + \
                        backlogDate + backlog.description
             ws[cell] = incValue
             if not backlog.checked:
