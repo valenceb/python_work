@@ -4,7 +4,7 @@ __author__ = "valenceb"
 
 from openpyxl.styles import NamedStyle, Font, Border, Side, PatternFill, Alignment
 
-brightFont = Font(name='Calibri',
+brightFont = Font(name='Arial',
                   size=11,
                   bold=True,
                   italic=False,

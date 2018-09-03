@@ -61,7 +61,7 @@ class Project:
         for backlog in self.backlogs:
             cell = backlog.exlCol + str(backlog.exlRow)
             backlogDate = (backlog.date.strftime('%m/%d') + " ") \
-                if backlog.date else ""
+                if backlog.date else "TBD "
             preValue = ws[cell].value if ws[cell].value else ""
             incValue = preValue + ("√ " if backlog.checked else "◆ ") + \
                        backlogDate + backlog.description
@@ -83,7 +83,8 @@ class Sprint:
         self.endDate = string2Date(endDate)
         self.exlCol = chr(65 + exlCol)
         now = datetime.datetime.now()
-        if self.startDate < now and self.endDate > now:
+        nowDate = datetime.datetime.strptime(now.strftime('%Y/%m/%d'), '%Y/%m/%d')
+        if self.startDate <= nowDate and self.endDate >= nowDate:
             self.isCurSprint = True
         else:
             self.isCurSprint = False
@@ -98,10 +99,12 @@ class Sprint:
 
 class Backlog:
     def __init__(self, sprintList, actionItem, projExlRow):
-        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\">(.*?)(?:<time datetime=\"(.*?)\" class=\"date-past\">.*?</time>.*?)?</li>'
+        reg = '<li (?:class=\"(.*?)\" )?data-inline-task-id=\"\d+\">(.*?)(?:<time datetime=\"(.*?)\" class=\".*?\">.*?</time>.*?)?</li>'
         searchObj = re.search(reg, actionItem)
         self.checked = True if searchObj.group(1) == 'checked' else False
         self.description = trimHtml(searchObj.group(2)) + "\n"
+        self.description = self.description.replace("\\xc2\\xa0"," ")
+        self.description = self.description.replace("\\xe2\\x80\\x93", "-")
         tempDate = searchObj.group(3)
         self.date = (None if not tempDate
                      else datetime.datetime.strptime(tempDate, '%Y-%m-%d'))
@@ -118,7 +121,7 @@ class Backlog:
                     break
         else:
             for sprint in sprintList:
-                if sprint.startDate < self.date and sprint.endDate > self.date:
+                if sprint.startDate <= self.date and sprint.endDate >= self.date:
                     column = sprint.exlCol
                     break
         return column
