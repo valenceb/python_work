@@ -55,6 +55,7 @@ class Project:
         cell = 'A' + str(self.exlRow)
         ws[cell] = self.title
         ws[cell].style = 'projHeader'
+        ws[cell].hyperlink = self.wiki
         for sprint in sprintList:
             cell = sprint.exlCol + str(self.exlRow)
             ws[cell].style = 'backlog'
@@ -112,7 +113,7 @@ class Backlog:
         self.exlCol = self.inSprint(sprintList)
 
     def inSprint(self, sprintList):
-        column = 'A'
+        column = sprintList[-1].exlCol
         if not self.date:
             for sprint in sprintList:
                 if sprint.isCurSprint:

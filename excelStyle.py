@@ -45,7 +45,7 @@ def getProjHeaderStyle():
                            vertAlign=None,
                            underline='none',
                            strike=False,
-                           color='000000')
+                           color='0000FF')
     projHeader.border = Border(left=bd, top=bd, right=bd, bottom=bd)
     projHeader.alignment = alignment
     return projHeader

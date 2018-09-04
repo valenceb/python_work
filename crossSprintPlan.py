@@ -38,7 +38,7 @@ if __name__ == '__main__':
             else:
                 projectList.append(proj)
             i += 1
-    print(projectList)
-    print(sprintList)
+    # print(projectList)
+    # print(sprintList)
     wb.save("output/CrossSprintReport.xlsx")
     print('\nProcess Done.')
