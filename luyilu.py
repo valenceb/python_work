@@ -6,6 +6,8 @@ from io import BytesIO
 from PIL import Image
 
 number = 1
+
+
 def getHtml(url):
     try:
         page = urllib.request.urlopen(url)
@@ -34,7 +36,6 @@ def saveImages(imglist, name, nvyouID):
     for imageURL in imglist:
         splitPath = imageURL.split('.')
         fTail = splitPath.pop()
-        fName = splitPath.pop().split('/').pop()
         if len(fTail) > 3:
             fTail = 'jpg'
         fileName = name + "/" + str(nvyouID) + '_' + ("%03d" % number) + "." + fTail
@@ -70,28 +71,14 @@ def crawling(url, path, nvyouID):
     srcHtml = getHtml(url)
     if not srcHtml:
         return False
-    mkdir(path)
     imglist = getAllImg(srcHtml)
     saveImages(imglist, path, nvyouID)
     return True
 
 
-def getDomain(urlstr):
-    reg = '(http://.+?)/.+'
-    dmn = re.findall(reg, urlstr)
-    if len(dmn) > 0:
-        dmnstr = dmn[0][:-1]
-        print(str(dmnstr))
-        return dmnstr
-    else:
-        return urlstr
-
-
 def crawling_by_category(url, index):
     global number
-    number =1
-    path = time.strftime('%Y-%m-%d', time.localtime(time.time()))
-    path = "output/luyilu_" + path
+    number = 1
     crawling(url + str(index) + '.html', path, index)
     for value in range(2, 30):
         if not crawling(url + str(index) + '_' + str(value) + '.html', path, index): break
@@ -99,6 +86,9 @@ def crawling_by_category(url, index):
 
 if __name__ == '__main__':
     url = "https://96xx2019.com/luyilu/"
-    for value in range(1200, 1900):
+    path = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+    path = "output/luyilu_" + path
+    mkdir(path)
+    for value in range(1262, 1900):
         crawling_by_category(url, value)
     print("Process Completed Successfully.")
