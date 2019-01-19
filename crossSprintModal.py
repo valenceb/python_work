@@ -120,6 +120,8 @@ class Backlog:
                     column = chr(ord(sprint.exlCol) + 1)
                     # 没有设置Timeline的Item默认放到下个Sprint
                     break
+            if self.checked:
+                column = sprintList[0].exlCol
         else:
             for sprint in sprintList:
                 if sprint.startDate <= self.date and sprint.endDate >= self.date:
