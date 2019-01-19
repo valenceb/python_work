@@ -46,7 +46,7 @@ def saveImages(imglist, name, nvyouID):
                 im = Image.open(BytesIO(data))
             except Exception as err:
                 print(err)
-            if im.size[0] < 300:
+            if im.size[0] <= 430:
                 return
             f = open(fileName, 'wb+')
             f.write(data)
