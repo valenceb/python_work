@@ -54,6 +54,7 @@ def saveImages(imglist, picSite):
         splitPath = imageURL.split('.')
         fTail = splitPath.pop()
         imageURL = imageURL if imageURL[0:4] == "http" else picSite.getDomain() + imageURL
+        print(imageURL)
         if len(fTail) > 3:
             fTail = 'jpg'
         fileName = picSite.path + "/" + str(picSite.nvyouID) + '_' + ("%03d" % picSite.picCount) + "." + fTail
@@ -69,7 +70,7 @@ def saveImages(imglist, picSite):
                 return
             f = open(fileName, 'wb+')
             f.write(data)
-            print('Saving a pic named ', fileName)
+            print('Saving a pic named', fileName)
             f.close()
         except urllib.error.HTTPError as e:
             print(imageURL)
@@ -90,6 +91,8 @@ def crawling(picSite):
     if not srcHtml:
         return False
     imglist = getAllImg(srcHtml)
+    if len(imglist) > 0 and imglist[0] == 'https://www.images.96xxpic.com:8819/allimg/161029/1-1610292146350-L.jpg':
+        return False
     saveImages(imglist, picSite)
     return True
 
@@ -97,16 +100,17 @@ def crawling(picSite):
 def crawling_by_category(picSite):
     picSite.picCount = 1
     picSite.subUrl = picSite.url + str(picSite.nvyouID) + '.html'
-    crawling(picSite)
-    for value in range(2, 30):
-        picSite.subUrl = picSite.url + str(picSite.nvyouID) + '_' + str(value) + '.html'
+    # crawling(picSite)
+    for value in range(1, 30):
+        if value != 1:
+            picSite.subUrl = picSite.url + str(picSite.nvyouID) + '_' + str(value) + '.html'
         if not crawling(picSite): break
 
 
 if __name__ == '__main__':
     picSite = PicSite("https://96xx2019.com/luyilu/")
     mkdir(picSite.path)
-    for value in range(1266, 1900):
+    for value in range(3298, 4000):
         picSite.nvyouID = value
         crawling_by_category(picSite)
     print("Process Completed Successfully.")
