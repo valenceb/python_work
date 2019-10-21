@@ -1,2 +1,2 @@
-import webbrowser
-webbrowser.open('http://www.baidu.com/')
+import os
+os.system('a.jpg')
