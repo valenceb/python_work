@@ -1,2 +1,2 @@
 import os
-os.system('a.jpg')
+os.getcwd()
