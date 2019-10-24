@@ -82,5 +82,10 @@ def PeterParker():
     img = next(session['crawler'])
     return render_template('default.html', picSource=img)
 
+@app.route('/next')
+def PeterParker_next():
+    img = next(session['crawler'])
+    return render_template('default.html', picSource=img)
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
