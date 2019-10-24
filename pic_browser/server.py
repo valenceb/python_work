@@ -5,6 +5,7 @@ from io import BytesIO
 
 app = Flask(__name__)
 
+
 def getHtml(url):
     try:
         page = urllib.request.urlopen(url)
@@ -65,7 +66,7 @@ class PicSite:
                 if len(imglist) > 0 and imglist[
                     0] == 'https://www.images.96xxpic.com:8819/allimg/161029/1-1610292146350-L.jpg':
                     return False
-                #每页只显示三张
+                # 每页只显示三张
                 self.nPerPage = 0
                 for il in imglist:
                     self.nPerPage += 1
@@ -75,6 +76,7 @@ class PicSite:
                     yield photoImage
                     print("peek " + il)
 
+
 @app.route('/')
 def PeterParker():
     picSite = PicSite("https://96xx2019.com/luyilu/")
@@ -82,10 +84,12 @@ def PeterParker():
     img = next(session['crawler'])
     return render_template('default.html', picSource=img)
 
+
 @app.route('/next')
 def PeterParker_next():
     img = next(session['crawler'])
     return render_template('default.html', picSource=img)
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
