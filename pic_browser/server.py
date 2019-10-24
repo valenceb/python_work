@@ -80,17 +80,18 @@ class PicSite:
 
 @app.route('/')
 def PeterParker():
-    picSite = PicSite("https://96xx2019.com/luyilu/")
-    session['crawler'] = picSite.crawling_by_category()
-    img = next(session['crawler'])
+    crawler = session['picSite'].crawling_by_category()
+    img = next(crawler)
     return render_template('default.html', picSource=img)
 
 
 @app.route('/next')
 def PeterParker_next():
-    img = next(session['crawler'])
+    crawler = session['picSite'].crawling_by_category()
+    img = next(crawler)
     return render_template('default.html', picSource=img)
 
 
 if __name__ == '__main__':
+    session['picSite'] = PicSite("https://96xx2019.com/luyilu/")
     app.run(port=5000, debug=True)
