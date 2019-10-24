@@ -77,21 +77,20 @@ class PicSite:
                     yield photoImage
                     print("peek " + il)
 
+picSite = PicSite("https://96xx2019.com/luyilu/")
+crawler = next(picSite.crawling_by_category())
 
 @app.route('/')
 def PeterParker():
-    crawler = session['picSite'].crawling_by_category()
     img = next(crawler)
     return render_template('default.html', picSource=img)
 
 
 @app.route('/next')
 def PeterParker_next():
-    crawler = session['picSite'].crawling_by_category()
     img = next(crawler)
     return render_template('default.html', picSource=img)
 
 
 if __name__ == '__main__':
-    session['picSite'] = PicSite("https://96xx2019.com/luyilu/")
     app.run(port=5000, debug=True)
