@@ -33,9 +33,10 @@ def getNvyouIDs(html):
 
 
 def getImage(url):
-    image = urllib.request.get(url).content
-    image_b = BytesIO(image).read()
-    size = len(image_b)
+    rq = urllib.request.Request(url)
+    u = urllib.request.urlopen(rq)
+    data = u.read()
+    size = len(BytesIO(data).read())
     if size <= 19900:
         return False
     return url
@@ -79,8 +80,6 @@ def PeterParker():
     picSite = PicSite("https://96xx2019.com/luyilu/")
     crawlingGenerator = picSite.crawling_by_category()
     img = next(crawlingGenerator)
-    return render_template('default.html', picSource = img)
-
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
