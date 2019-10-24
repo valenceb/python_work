@@ -4,6 +4,7 @@ import urllib.request
 from io import BytesIO
 
 app = Flask(__name__)
+app.secret_key = '123456'
 
 
 def getHtml(url):
