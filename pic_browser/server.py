@@ -1,0 +1,86 @@
+from flask import Flask, render_template
+import re
+import urllib.request
+from io import BytesIO
+
+app = Flask(__name__)
+
+def getHtml(url):
+    try:
+        page = urllib.request.urlopen(url)
+        html = page.read()
+        html = str(html)
+        return html
+    except urllib.error.HTTPError as e:
+        print(e.reason)
+        return False
+
+
+def getAllImg(html):
+    reg = r'src=\"(.{0,100}\.jpg)\"'
+    imglist = re.findall(reg, html)
+    return imglist
+
+
+def getNvyouIDs(html):
+    reg = r'/luyilu/(.{0,100}).html'
+    nvyouIDList = re.findall(reg, html)
+    nvyouIDList = list(map(int, nvyouIDList))
+    nvyouIDList = list(set(nvyouIDList))
+    nvyouIDList.sort()
+    nvyouIDList.reverse()
+    return nvyouIDList
+
+
+def getImage(url):
+    image = urllib.request.get(url).content
+    image_b = BytesIO(image).read()
+    size = len(image_b)
+    if size <= 19900:
+        return False
+    return url
+
+
+class PicSite:
+    def __init__(self, url):
+        self.url = url
+        self.subUrl = ''
+        self.nvyouIDs = getNvyouIDs(getHtml(url))
+        self.image = ''
+        self.nPerPage = 0
+
+    def crawling_by_category(self):
+        for nvyouID in self.nvyouIDs:
+            self.subUrl = self.url + str(nvyouID) + '.html'
+            # crawling(picSite)
+            for value in range(1, 30):
+                if value != 1:
+                    self.subUrl = self.url + str(nvyouID) + '_' + str(value) + '.html'
+                print("Crawling " + self.subUrl)
+                srcHtml = getHtml(self.subUrl)
+                if not srcHtml:
+                    return False
+                imglist = getAllImg(srcHtml)
+                if len(imglist) > 0 and imglist[
+                    0] == 'https://www.images.96xxpic.com:8819/allimg/161029/1-1610292146350-L.jpg':
+                    return False
+                #每页只显示三张
+                self.nPerPage = 0
+                for il in imglist:
+                    self.nPerPage += 1
+                    if self.nPerPage >= 4: break
+                    photoImage = getImage(il)
+                    if not photoImage: continue
+                    yield photoImage
+                    print("peek " + il)
+
+@app.route('/')
+def PeterParker():
+    picSite = PicSite("https://96xx2019.com/luyilu/")
+    crawlingGenerator = picSite.crawling_by_category()
+    img = next(crawlingGenerator)
+    return render_template('default.html', picSource = img)
+
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)
