@@ -78,7 +78,7 @@ class PicSite:
                     print("peek " + il)
 
 picSite = PicSite("https://96xx2019.com/luyilu/")
-crawler = next(picSite.crawling_by_category())
+crawler = picSite.crawling_by_category()
 
 @app.route('/')
 def PeterParker():
