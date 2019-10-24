@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
 import re
 import urllib.request
 from io import BytesIO
@@ -78,8 +78,8 @@ class PicSite:
 @app.route('/')
 def PeterParker():
     picSite = PicSite("https://96xx2019.com/luyilu/")
-    crawlingGenerator = picSite.crawling_by_category()
-    img = next(crawlingGenerator)
+    session['crawler'] = picSite.crawling_by_category()
+    img = next(session['crawler'])
     return render_template('default.html', picSource=img)
 
 if __name__ == '__main__':
