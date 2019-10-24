@@ -80,6 +80,7 @@ def PeterParker():
     picSite = PicSite("https://96xx2019.com/luyilu/")
     crawlingGenerator = picSite.crawling_by_category()
     img = next(crawlingGenerator)
+    return render_template('default.html', picSource=img)
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
