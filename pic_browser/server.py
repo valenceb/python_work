@@ -3,9 +3,6 @@ import re
 import urllib.request
 from io import BytesIO
 
-app = Flask(__name__)
-app.secret_key = '123456'
-
 
 def getHtml(url):
     try:
@@ -77,20 +74,33 @@ class PicSite:
                     yield photoImage
                     print("peek " + il)
 
+
+app = Flask(__name__)
+app.secret_key = '123456'
 picSite = PicSite("https://96xx2019.com/luyilu/")
 crawler = picSite.crawling_by_category()
 
+
 @app.route('/')
 def PeterParker():
-    img = next(crawler)
-    return render_template('default.html', picSource=img)
+    if not session['locker']:
+        session['locker'] = True
+        img = next(crawler)
+        return render_template('default.html', picSource=img)
+        session['locker'] = False
+    return "Loading..."
 
 
 @app.route('/next')
 def PeterParker_next():
-    img = next(crawler)
-    return render_template('default.html', picSource=img)
+    if not session['locker']:
+        session['locker'] = True
+        img = next(crawler)
+        return render_template('default.html', picSource=img)
+        session['locker'] = False
+    return "Loading..."
 
 
 if __name__ == '__main__':
+    session['locker'] = False
     app.run(port=5000, debug=True)
