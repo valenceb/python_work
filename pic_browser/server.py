@@ -84,7 +84,7 @@ crawler = picSite.crawling_by_category()
 @app.route('/')
 def PeterParker():
     session['locker'] = False
-    return redirect(url_for('next'))
+    return redirect(url_for('PeterParker_next'))
 
 
 @app.route('/next')
