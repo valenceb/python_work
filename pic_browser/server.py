@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, redirect, url_for
 import re
 import urllib.request
 from io import BytesIO
@@ -83,13 +83,8 @@ crawler = picSite.crawling_by_category()
 
 @app.route('/')
 def PeterParker():
-    if not session['locker']:
-        session['locker'] = True
-        img = next(crawler)
-        session['locker'] = False
-        return render_template('default.html', picSource=img)
-
-    return "Loading..."
+    session['locker'] = False
+    return redirect(url_for('next'))
 
 
 @app.route('/next')
