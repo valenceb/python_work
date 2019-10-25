@@ -86,8 +86,9 @@ def PeterParker():
     if not session['locker']:
         session['locker'] = True
         img = next(crawler)
-        return render_template('default.html', picSource=img)
         session['locker'] = False
+        return render_template('default.html', picSource=img)
+
     return "Loading..."
 
 
@@ -96,8 +97,8 @@ def PeterParker_next():
     if not session['locker']:
         session['locker'] = True
         img = next(crawler)
-        return render_template('default.html', picSource=img)
         session['locker'] = False
+        return render_template('default.html', picSource=img)
     return "Loading..."
 
 
