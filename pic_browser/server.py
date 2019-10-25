@@ -103,5 +103,4 @@ def PeterParker_next():
 
 
 if __name__ == '__main__':
-    session['locker'] = False
     app.run(port=5000, debug=True)
