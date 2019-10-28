@@ -96,6 +96,16 @@ def PeterParker_next():
         return render_template('default.html', picSource=img)
     return "Loading..."
 
+@app.route('/nextpage')
+def PeterParker_nextpage():
+    picSite.nPerPage = 4
+    if not session['locker']:
+        session['locker'] = True
+        img = next(crawler)
+        session['locker'] = False
+        return render_template('default.html', picSource=img)
+    return "Loading..."
+
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
