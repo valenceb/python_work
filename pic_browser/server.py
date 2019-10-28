@@ -59,11 +59,11 @@ class PicSite:
                 print("Crawling " + self.subUrl)
                 srcHtml = getHtml(self.subUrl)
                 if not srcHtml:
-                    return False
+                    continue
                 imglist = getAllImg(srcHtml)
                 if len(imglist) > 0 and imglist[
                     0] == 'https://www.images.96xxpic.com:8819/allimg/161029/1-1610292146350-L.jpg':
-                    return False
+                    continue
                 # 每页只显示三张
                 self.nPerPage = 0
                 for il in imglist:
