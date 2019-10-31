@@ -52,6 +52,7 @@ class PicSite:
     def crawling_by_category(self):
         for nvyouID in self.nvyouIDs:
             self.subUrl = self.url + str(nvyouID) + '.html'
+            print("Current NvyouID: " + str(nvyouID))
             # crawling(picSite)
             for value in range(1, 30):
                 if value != 1:
