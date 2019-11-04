@@ -48,6 +48,7 @@ class PicSite:
         self.nvyouIDs = getNvyouIDs(getHtml(url))
         self.image = ''
         self.nPerPage = 0
+        self.locker = False
 
     def crawling_by_category(self):
         for nvyouID in self.nvyouIDs:
@@ -83,26 +84,25 @@ crawler = picSite.crawling_by_category()
 
 @app.route('/')
 def PeterParker():
-    session['locker'] = False
     return redirect(url_for('PeterParker_next'))
 
 
 @app.route('/next')
 def PeterParker_next():
-    if not session['locker']:
-        session['locker'] = True
+    if not picSite.locker:
+        picSite.locker = True
         img = next(crawler)
-        session['locker'] = False
+        picSite.locker = False
         return render_template('default.html', picSource=img)
     return "Loading..."
 
 @app.route('/nextpage')
 def PeterParker_nextpage():
     picSite.nPerPage = 4
-    if not session['locker']:
-        session['locker'] = True
+    if not picSite.locker:
+        picSite.locker = True
         img = next(crawler)
-        session['locker'] = False
+        picSite.locker = False
         return render_template('default.html', picSource=img)
     return "Loading..."
 
