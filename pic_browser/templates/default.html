@@ -7,7 +7,9 @@
  
 	<body>
 		<p></p>
-		{{picSource}}
+		{% for key in picSource %}
+			<img src='{{picSource}}'/><p></p>
+		{% end %}
 		<a href="/next">Next</a>
 	</body>
 </html>

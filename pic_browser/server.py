@@ -68,7 +68,13 @@ class PicSite:
                     break
                 # 每页只显示三张
                 # self.nPerPage = 0
-                yield imglist
+                displayImg = []
+                for il in imglist:
+                    photoImage = getImage(il)
+                    if not photoImage: continue
+                    else:
+                        displayImg.append(photoImage)
+                yield displayImg
 
 
 app = Flask(__name__)
@@ -86,11 +92,9 @@ def PeterParker():
 def PeterParker_next():
     if not picSite.locker:
         picSite.locker = True
-        imglist = next(crawler)
-        for i in imglist:
-            i = "<img src='" + i + "'/><p></p>"
+        displayImg = next(crawler)
         picSite.locker = False
-        return render_template('default.html', picSource=imglist)
+        return render_template('default.html', picSource=displayImg)
     return "Loading..."
 
 # @app.route('/nextpage')
