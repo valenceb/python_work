@@ -47,7 +47,7 @@ class PicSite:
         self.subUrl = ''
         self.nvyouIDs = getNvyouIDs(getHtml(url))
         self.image = ''
-        self.nPerPage = 0
+        # self.nPerPage = 0
         self.locker = False
 
     def crawling_by_category(self):
@@ -67,14 +67,8 @@ class PicSite:
                     0] == 'https://www.images.96xxpic.com:8819/allimg/161029/1-1610292146350-L.jpg':
                     break
                 # 每页只显示三张
-                self.nPerPage = 0
-                for il in imglist:
-                    self.nPerPage += 1
-                    if self.nPerPage >= 4: break
-                    photoImage = getImage(il)
-                    if not photoImage: continue
-                    yield photoImage
-                    print("peek " + il)
+                # self.nPerPage = 0
+                yield imglist
 
 
 app = Flask(__name__)
@@ -92,20 +86,22 @@ def PeterParker():
 def PeterParker_next():
     if not picSite.locker:
         picSite.locker = True
-        img = next(crawler)
+        imglist = next(crawler)
+        for i in imglist:
+            i = "<img src='" + i + "'/><p></p>"
         picSite.locker = False
-        return render_template('default.html', picSource=img)
+        return render_template('default.html', picSource=imglist)
     return "Loading..."
 
-@app.route('/nextpage')
-def PeterParker_nextpage():
-    picSite.nPerPage = 4
-    if not picSite.locker:
-        picSite.locker = True
-        img = next(crawler)
-        picSite.locker = False
-        return render_template('default.html', picSource=img)
-    return "Loading..."
+# @app.route('/nextpage')
+# def PeterParker_nextpage():
+#     # picSite.nPerPage = 4
+#     if not picSite.locker:
+#         picSite.locker = True
+#         img = next(crawler)
+#         picSite.locker = False
+#         return render_template('default.html', picSource=img)
+#     return "Loading..."
 
 
 if __name__ == '__main__':
