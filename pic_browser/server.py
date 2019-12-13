@@ -68,13 +68,13 @@ class PicSite:
                     break
                 # 每页只显示三张
                 # self.nPerPage = 0
-                displayImg = []
-                for il in imglist:
-                    photoImage = getImage(il)
-                    if not photoImage: continue
-                    else:
-                        displayImg.append(photoImage)
-                yield displayImg
+                # displayImg = []
+                # for il in imglist:
+                #     photoImage = getImage(il)
+                #     if not photoImage: continue
+                #     else:
+                #         displayImg.append(photoImage)
+                yield imglist
 
 
 app = Flask(__name__)
