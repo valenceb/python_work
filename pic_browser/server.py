@@ -16,7 +16,7 @@ def getHtml(url):
 
 
 def getAllImg(html):
-    reg = r'src=\"(.{0,100}\.jpg)\"'
+    reg = r'src=\"(.{0,100}\.jpg)\" />'
     imglist = re.findall(reg, html)
     return imglist
 
