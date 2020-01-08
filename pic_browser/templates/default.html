@@ -7,17 +7,16 @@
  
 	<body>
 		<p></p>
-		{% for key in picSource %}
-			<img src='{{key}}'/><p></p>
-		{% endfor %}
-		<font size="18">
-			<center>
-				<a href="/next">Next</a>
-			</center>
+		<center>
+			{% for key in picSource %}
+				<img src='{{key}}'/><p></p>
+			{% endfor %}
+
+		<font size="26">
+			<a href="/next">Next</a>
 			<p></p>
-			<center>
-				<a href="/nextpage">Next Person</a>
-			</center>
+			<a href="/nextpage">Next Person</a>
 		</font>
+		</center>
 	</body>
 </html>
