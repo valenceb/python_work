@@ -40,18 +40,18 @@ def areaChart(prodLine, issueList) -> Line:
             .add_yaxis("Closed", y3_ClosedTime, markpoint_opts=opts.MarkPointOpts(symbol='diamond'))
     )
     c.overlap(scatter)
-    c.render("output/" + prodLine + "_area_chart.html")
+#     c.render("output/" + prodLine + "_area_chart.html")
 
-    with open('output/' + prodLine + '_turnaround.csv', 'w', newline='')as f:
-        csvfile = csv.writer(f)
-        data = [
-            x,
-            y2_IdleTime,
-            y1_TurnaroundTime,
-            y3_ClosedTime
-        ]
-        csvfile.writerows(data)
-        f.close()
+#     with open('output/' + prodLine + '_turnaround.csv', 'w', newline='')as f:
+#         csvfile = csv.writer(f)
+#         data = [
+#             x,
+#             y2_IdleTime,
+#             y1_TurnaroundTime,
+#             y3_ClosedTime
+#         ]
+#         csvfile.writerows(data)
+#         f.close()
 
     return c
 
@@ -61,7 +61,7 @@ def prodLineAreaChart(prodLine, jql):
     jiList = jiraOperator.jqlSearch(jql)
     jiraOperator.idleTimeBatch(jiList)
     jiraOperator.turnaroundTimeBatch(jiList)
-    areaChart(prodLine, jiList)
+    return areaChart(prodLine, jiList)
 
 
 if __name__ == '__main__':
