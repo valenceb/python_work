@@ -74,7 +74,7 @@ class PicSite:
 
 app = Flask(__name__)
 app.secret_key = '123456'
-picSite = PicSite("https://96gg.net/luyilu/")
+picSite = PicSite("https://uc96xx.net/luyilu/")
 crawler = picSite.crawling_by_category()
 
 
