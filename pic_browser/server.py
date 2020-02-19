@@ -91,7 +91,7 @@ def PeterParker_next():
         if not p:
             displayImg = next(crawler)
         else:
-            picSite = PicSite("https://uc96xx.net/luyilu/")
+            picSite.nextNvYou = True
             picSite.nvyouIDs.clear()
             for nvyouID in range(int(p), int(p) - 10):
                 picSite.nvyouIDs.append(nvyouID)
