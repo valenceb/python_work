@@ -91,9 +91,11 @@ def PeterParker_next():
         if not p:
             displayImg = next(crawler)
         else:
+            picSite = PicSite("https://uc96xx.net/luyilu/")
             picSite.nvyouIDs.clear()
             for nvyouID in range(int(p), int(p) - 10):
                 picSite.nvyouIDs.append(nvyouID)
+            crawler = picSite.crawling_by_category()
             displayImg = next(crawler)
         picSite.locker = False
         return render_template('default.html', picSource=displayImg)
