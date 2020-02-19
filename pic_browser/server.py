@@ -94,6 +94,7 @@ def PeterParker_next():
             picSite.nvyouIDs.clear()
             for nvyouID in range(int(p), int(p) - 10):
                 picSite.nvyouIDs.append(nvyouID)
+            displayImg = next(crawler)
         picSite.locker = False
         return render_template('default.html', picSource=displayImg)
     return "Loading..."
