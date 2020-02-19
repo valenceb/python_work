@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for, request
+from flask import Flask, render_template, session, redirect, url_for
 import re
 import urllib.request
 from io import BytesIO
@@ -83,24 +83,14 @@ def PeterParker():
     return redirect(url_for('PeterParker_next'))
 
 
-@app.route('/next', methods=['post', 'get'])
+@app.route('/next')
 def PeterParker_next():
     if not picSite.locker:
         picSite.locker = True
-        p = request.args.get('p')
-        if not p:
-            displayImg = next(crawler)
-        else:
-            picSite.nextNvYou = True
-            picSite.nvyouIDs.clear()
-            for nvyouID in range(int(p), int(p) - 10):
-                picSite.nvyouIDs.append(nvyouID)
-            crawler = picSite.crawling_by_category()
-            displayImg = next(crawler)
+        displayImg = next(crawler)
         picSite.locker = False
         return render_template('default.html', picSource=displayImg)
     return "Loading..."
-
 
 @app.route('/nextpage')
 def PeterParker_nextpage():
