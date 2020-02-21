@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 import re
 import urllib.request
 from io import BytesIO
@@ -21,13 +21,12 @@ def getAllImg(html):
     return imglist
 
 
-def getNvyouIDs(html):
-    reg = r'/luyilu/(.{0,100}).html'
+def getNvyouIDs(html, category):
+    reg = r'/'+category+'/(.{0,100}).html'
     nvyouIDList = re.findall(reg, html)
     nvyouIDList = list(map(int, nvyouIDList))
     nvyouIDList = list(set(nvyouIDList))
     nvyouIDList.sort()
-    nvyouIDList.reverse()
     return nvyouIDList
 
 
@@ -45,19 +44,24 @@ class PicSite:
     def __init__(self, url):
         self.url = url
         self.subUrl = ''
-        self.nvyouIDs = getNvyouIDs(getHtml(url))
+        self.category = ''
+        self.nvyouIDs = None
         self.image = ''
         self.nextNvYou = False
         self.locker = False
 
     def crawling_by_category(self):
-        for nvyouID in self.nvyouIDs:
-            self.subUrl = self.url + str(nvyouID) + '.html'
+        if not self.category:
+            self.category = 'luyilu'
+        if not self.nvyouIDs:
+            self.nvyouIDs = getNvyouIDs(getHtml(self.url + self.category + "/"), self.category)
+        while (len(self.nvyouIDs)>0):
+            nvyouID = self.nvyouIDs.pop()
+            self.subUrl = self.url + self.category + "/" + str(nvyouID) + '.html'
             print("Current NvyouID: " + str(nvyouID))
-            # crawling(picSite)
             for value in range(1, 30):
                 if value != 1:
-                    self.subUrl = self.url + str(nvyouID) + '_' + str(value) + '.html'
+                    self.subUrl = self.url + self.category + "/" + str(nvyouID) + '_' + str(value) + '.html'
                 print("Crawling " + self.subUrl)
                 srcHtml = getHtml(self.subUrl)
                 if not srcHtml:
@@ -74,7 +78,7 @@ class PicSite:
 
 app = Flask(__name__)
 app.secret_key = '123456'
-picSite = PicSite("https://uc96xx.net/luyilu/")
+picSite = PicSite("https://uc96xx.net/")
 crawler = picSite.crawling_by_category()
 
 
@@ -83,8 +87,16 @@ def PeterParker():
     return redirect(url_for('PeterParker_next'))
 
 
-@app.route('/next')
+@app.route('/next', methods=['post','get'])
 def PeterParker_next():
+    c = request.args.get('c')
+    p = request.args.get('p')
+    if c and not picSite.category:
+        picSite.category = c
+    if p and not picSite.nvyouIDs:
+        p = int(p)
+        picSite.nvyouIDs = list(range(p-10, p+1))
+        print (picSite.nvyouIDs)
     if not picSite.locker:
         picSite.locker = True
         displayImg = next(crawler)
