@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, redirect, url_for
+from flask import Flask, render_template, redirect, url_for
 import re
 import urllib.request
 from io import BytesIO
@@ -104,4 +104,4 @@ def PeterParker_nextpage():
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5000, debug=False)
