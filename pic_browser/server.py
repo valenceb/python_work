@@ -95,7 +95,7 @@ def PeterParker_next():
         picSite.category = c
     if p and not picSite.nvyouIDs:
         p = int(p)
-        picSite.nvyouIDs = list(range(p-10, p+1))
+        picSite.nvyouIDs = list(range(p, p+11))
         print (picSite.nvyouIDs)
     if not picSite.locker:
         picSite.locker = True
