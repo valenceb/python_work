@@ -96,6 +96,7 @@ def PeterParker_next():
     if p and not picSite.nvyouIDs:
         p = int(p)
         picSite.nvyouIDs = list(range(p, p+11))
+        picSite.nvyouIDs.reverse()
         print (picSite.nvyouIDs)
     if not picSite.locker:
         picSite.locker = True
