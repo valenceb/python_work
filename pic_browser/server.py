@@ -46,16 +46,15 @@ class PicSite:
         self.subUrl = ''
         self.category = ''
         self.nvyouIDs = None
-        self.image = ''
         self.nextNvYou = False
         self.locker = False
 
     def crawling_by_category(self):
-        if not self.category:
-            self.category = 'luyilu'
-        if not self.nvyouIDs:
-            self.nvyouIDs = getNvyouIDs(getHtml(self.url + self.category + "/"), self.category)
-        while (len(self.nvyouIDs)>0):
+        while (True):
+            if not self.category:
+                self.category = 'luyilu'
+            if not self.nvyouIDs:
+                self.nvyouIDs = getNvyouIDs(getHtml(self.url + self.category + "/"), self.category)
             nvyouID = self.nvyouIDs.pop()
             self.subUrl = self.url + self.category + "/" + str(nvyouID) + '.html'
             print("Current NvyouID: " + str(nvyouID))
@@ -64,14 +63,13 @@ class PicSite:
                     self.subUrl = self.url + self.category + "/" + str(nvyouID) + '_' + str(value) + '.html'
                 print("Crawling " + self.subUrl)
                 srcHtml = getHtml(self.subUrl)
+                if self.nextNvYou:
+                    self.nextNvYou = False
+                    break
                 if not srcHtml:
                     break
                 imglist = getAllImg(srcHtml)
-                if len(imglist) > 0 and imglist[
-                    0] == 'https://www.images.96xxpic.com:8819/allimg/161029/1-1610292146350-L.jpg':
-                    break
-                if self.nextNvYou:
-                    self.nextNvYou = False
+                if not imglist:
                     break
                 yield imglist
 
@@ -91,10 +89,20 @@ def PeterParker():
 def PeterParker_next():
     c = request.args.get('c')
     p = request.args.get('p')
-    if c and not picSite.category:
+    if c:
         picSite.category = c
-    if p and not picSite.nvyouIDs:
+        #If new id requested, break the current one.
+        if picSite.nvyouIDs:
+            picSite.nextNvYou = True
+            picSite.nvyouIDs = p
+            
+    if p:
         p = int(p)
+        #If new id requested, break the current one.
+        if picSite.nvyouIDs:
+            picSite.nextNvYou = True
+            picSite.category = c
+        
         picSite.nvyouIDs = list(range(p, p+11))
         picSite.nvyouIDs.reverse()
         print (picSite.nvyouIDs)
