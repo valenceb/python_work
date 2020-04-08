@@ -76,7 +76,7 @@ class PicSite:
 
 app = Flask(__name__)
 app.secret_key = '123456'
-picSite = PicSite("https://uc96xx.net/")
+picSite = PicSite("https://96jj.net/")
 crawler = picSite.crawling_by_category()
 
 
@@ -89,23 +89,20 @@ def PeterParker():
 def PeterParker_next():
     c = request.args.get('c')
     p = request.args.get('p')
-    if c:
+    if p or c:
+        #If new id requested, break the current one.
+        if picSite.nvyouIDs:
+            picSite.nextNvYou = True
+        #Set the value to p/c respectively.
         picSite.category = c
-        #If new id requested, break the current one.
-        if picSite.nvyouIDs:
-            picSite.nextNvYou = True
+        if p:
+            p = int(p)
+            picSite.nvyouIDs = list(range(p, p+51))
+            picSite.nvyouIDs.reverse()
+            print (picSite.nvyouIDs)
+        else:
             picSite.nvyouIDs = p
-            
-    if p:
-        p = int(p)
-        #If new id requested, break the current one.
-        if picSite.nvyouIDs:
-            picSite.nextNvYou = True
-            picSite.category = c
-        
-        picSite.nvyouIDs = list(range(p, p+11))
-        picSite.nvyouIDs.reverse()
-        print (picSite.nvyouIDs)
+
     if not picSite.locker:
         picSite.locker = True
         displayImg = next(crawler)
